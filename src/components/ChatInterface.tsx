@@ -13,8 +13,6 @@ const SUGGESTIONS = [
   { icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6", text: "Uy-joy sotib olishda qanday hujjatlar kerak?" },
   { icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z", text: "Iste'molchi huquqlari buzilsa nima qilish kerak?" },
   { icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z", text: "Ajrashish jarayoni qanday bo'ladi?" },
-  { icon: "M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z", text: "Soliq to'lash tartibi qanday?" },
-  { icon: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z", text: "Mehnat ta'tili necha kun?" },
 ];
 
 export default function ChatInterface() {
@@ -36,9 +34,7 @@ export default function ChatInterface() {
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setLoading(true);
-
-    // Reset textarea height
-    if (inputRef.current) inputRef.current.style.height = "52px";
+    if (inputRef.current) inputRef.current.style.height = "48px";
 
     try {
       const res = await fetch("/api/chat", {
@@ -56,7 +52,6 @@ export default function ChatInterface() {
 
       const reader = res.body?.getReader();
       const decoder = new TextDecoder();
-
       if (!reader) throw new Error("Stream mavjud emas");
 
       setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
@@ -64,10 +59,8 @@ export default function ChatInterface() {
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-
         const chunk = decoder.decode(value);
         const lines = chunk.split("\n").filter((l) => l.startsWith("data: "));
-
         for (const line of lines) {
           const data = line.slice(6);
           if (data === "[DONE]") break;
@@ -99,72 +92,84 @@ export default function ChatInterface() {
     }
   };
 
-  const newChat = () => {
-    setMessages([]);
-    setInput("");
-  };
+  const newChat = () => { setMessages([]); setInput(""); };
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Messages area */}
-      <div className="flex-1 overflow-y-auto">
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", fontFamily: "'Inter', -apple-system, sans-serif" }}>
+      {/* Messages */}
+      <div style={{ flex: 1, overflowY: "auto" }}>
         {messages.length === 0 ? (
-          /* Welcome screen */
-          <div className="flex flex-col items-center justify-center min-h-full px-4 py-10">
-            <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center shadow-2xl glow-amber mb-8">
-              <svg className="w-10 h-10 text-dark-900" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L19.18 7.5 12 10.82 4.82 7.5 12 4.18zM4 8.64l7 3.5V19.5l-7-3.5V8.64zm9 10.86v-7.36l7-3.5v7.36l-7 3.5z"/>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100%", padding: "60px 20px 40px" }}>
+            <div style={{
+              width: 64, height: 64, borderRadius: 20,
+              background: "linear-gradient(135deg, #fbbf24, #d97706)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              marginBottom: 28, boxShadow: "0 0 40px rgba(251,191,36,0.15)",
+            }}>
+              <svg width="30" height="30" fill="none" stroke="#0a0e1a" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
               </svg>
             </div>
-            <h2 className="text-3xl font-bold text-white mb-3">Savolingizni bering</h2>
-            <p className="text-dark-300 text-center mb-10 max-w-md">
+            <h2 style={{ fontSize: 24, fontWeight: 700, color: "#fff", marginBottom: 8 }}>Savolingizni bering</h2>
+            <p style={{ fontSize: 14, color: "#64748b", textAlign: "center", marginBottom: 36, maxWidth: 380, lineHeight: 1.6 }}>
               O&apos;zbekiston qonunchiligi bo&apos;yicha istalgan savolni yozing — aniq javob oling
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-w-3xl w-full">
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12, maxWidth: 520, width: "100%" }}>
               {SUGGESTIONS.map((s) => (
                 <button
                   key={s.text}
                   onClick={() => sendMessage(s.text)}
-                  className="group text-left p-4 glass rounded-2xl hover:border-primary-500/30 transition-all hover:-translate-y-0.5"
+                  style={{
+                    textAlign: "left", padding: "16px 18px",
+                    background: "rgba(17,24,39,0.5)", border: "1px solid rgba(36,48,73,0.6)",
+                    borderRadius: 14, cursor: "pointer", transition: "all 0.2s",
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(251,191,36,0.3)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(36,48,73,0.6)"; e.currentTarget.style.transform = "none"; }}
                 >
-                  <svg className="w-5 h-5 text-primary-400 mb-2 group-hover:scale-110 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={s.icon} />
+                  <svg width="18" height="18" fill="none" stroke="#fbbf24" strokeWidth={1.5} viewBox="0 0 24 24" style={{ marginBottom: 8 }}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d={s.icon} />
                   </svg>
-                  <p className="text-sm text-dark-200 group-hover:text-white transition leading-relaxed">{s.text}</p>
+                  <p style={{ fontSize: 13, color: "#94a3b8", lineHeight: 1.5, margin: 0 }}>{s.text}</p>
                 </button>
               ))}
             </div>
           </div>
         ) : (
-          /* Chat messages */
-          <div className="max-w-3xl mx-auto px-4 py-6 space-y-1">
+          <div style={{ maxWidth: 680, margin: "0 auto", padding: "24px 20px" }}>
             {messages.map((msg, i) => (
-              <div key={i} className="animate-fade-up" style={{ animationDelay: `${i * 30}ms` }}>
+              <div key={i}>
                 {msg.role === "user" ? (
-                  /* User message */
-                  <div className="flex justify-end mb-4">
-                    <div className="max-w-[85%] bg-gradient-to-br from-primary-500/20 to-primary-600/10 border border-primary-500/20 rounded-2xl rounded-tr-md px-5 py-3.5">
-                      <p className="text-dark-50 whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                  <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 20 }}>
+                    <div style={{
+                      maxWidth: "80%", background: "rgba(251,191,36,0.1)",
+                      border: "1px solid rgba(251,191,36,0.15)",
+                      borderRadius: "18px 18px 4px 18px", padding: "14px 18px",
+                    }}>
+                      <p style={{ color: "#f1f5f9", whiteSpace: "pre-wrap", lineHeight: 1.6, margin: 0, fontSize: 14 }}>{msg.content}</p>
                     </div>
                   </div>
                 ) : (
-                  /* AI message */
-                  <div className="flex gap-3 mb-6">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center mt-1 shadow-lg shadow-primary-500/20">
-                      <svg className="w-4 h-4 text-dark-900" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2L2 7v10l10 5 10-5V7L12 2z"/>
+                  <div style={{ display: "flex", gap: 12, marginBottom: 28 }}>
+                    <div style={{
+                      flexShrink: 0, width: 32, height: 32, borderRadius: 10,
+                      background: "linear-gradient(135deg, #fbbf24, #d97706)",
+                      display: "flex", alignItems: "center", justifyContent: "center", marginTop: 2,
+                    }}>
+                      <svg width="14" height="14" fill="none" stroke="#0a0e1a" strokeWidth={2} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
                       </svg>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-xs text-primary-400 font-medium mb-1.5">Yurist AI</div>
-                      <div className="prose-chat text-dark-100 text-[15px]">
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 11, color: "#fbbf24", fontWeight: 600, marginBottom: 6, letterSpacing: 0.5 }}>YURIST AI</div>
+                      <div className="prose-chat" style={{ color: "#cbd5e1", fontSize: 14, lineHeight: 1.7 }}>
                         <ReactMarkdown>{msg.content}</ReactMarkdown>
                         {loading && i === messages.length - 1 && !msg.content && (
-                          <div className="flex gap-1.5 py-2">
-                            <span className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                            <span className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                            <span className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                          <div style={{ display: "flex", gap: 6, padding: "8px 0" }}>
+                            {[0, 150, 300].map((d) => (
+                              <span key={d} style={{ width: 8, height: 8, background: "#fbbf24", borderRadius: "50%", animation: `bounce 1.4s ease-in-out ${d}ms infinite` }} />
+                            ))}
                           </div>
                         )}
                       </div>
@@ -178,22 +183,31 @@ export default function ChatInterface() {
         )}
       </div>
 
-      {/* Input bar */}
-      <div className="border-t border-dark-700/50 bg-dark-900/90 backdrop-blur-xl px-4 py-4">
-        <div className="max-w-3xl mx-auto">
-          <div className="flex gap-3 items-end">
+      {/* Input */}
+      <div style={{
+        borderTop: "1px solid rgba(255,255,255,0.06)",
+        background: "rgba(10,14,26,0.9)", backdropFilter: "blur(16px)",
+        padding: "16px 20px",
+      }}>
+        <div style={{ maxWidth: 680, margin: "0 auto" }}>
+          <div style={{ display: "flex", gap: 10, alignItems: "flex-end" }}>
             {messages.length > 0 && (
               <button
                 onClick={newChat}
                 title="Yangi suhbat"
-                className="flex-shrink-0 w-[52px] h-[52px] rounded-2xl border border-dark-600 hover:border-dark-400 bg-dark-800 hover:bg-dark-700 flex items-center justify-center transition text-dark-300 hover:text-white"
+                style={{
+                  flexShrink: 0, width: 48, height: 48, borderRadius: 14,
+                  border: "1px solid #243049", background: "#111827",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  cursor: "pointer", color: "#64748b",
+                }}
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
               </button>
             )}
-            <div className="flex-1 relative">
+            <div style={{ flex: 1, position: "relative" }}>
               <textarea
                 ref={inputRef}
                 value={input}
@@ -201,34 +215,53 @@ export default function ChatInterface() {
                 onKeyDown={handleKeyDown}
                 placeholder="Yuridik savolingizni yozing..."
                 rows={1}
-                className="w-full bg-dark-800 border border-dark-600 focus:border-primary-500 rounded-2xl pl-5 pr-14 py-3.5 text-white placeholder-dark-400 resize-none focus:outline-none focus:ring-1 focus:ring-primary-500/50 transition text-[15px] leading-relaxed"
-                style={{ minHeight: "52px", maxHeight: "140px" }}
+                style={{
+                  width: "100%", background: "#111827", border: "1px solid #243049",
+                  borderRadius: 14, padding: "14px 52px 14px 18px",
+                  color: "#fff", fontSize: 14, resize: "none",
+                  outline: "none", minHeight: 48, maxHeight: 140,
+                  lineHeight: 1.5, boxSizing: "border-box",
+                  fontFamily: "'Inter', -apple-system, sans-serif",
+                }}
+                onFocus={(e) => { e.currentTarget.style.borderColor = "#f59e0b"; }}
+                onBlur={(e) => { e.currentTarget.style.borderColor = "#243049"; }}
                 onInput={(e) => {
                   const t = e.target as HTMLTextAreaElement;
-                  t.style.height = "52px";
+                  t.style.height = "48px";
                   t.style.height = Math.min(t.scrollHeight, 140) + "px";
                 }}
               />
               <button
                 onClick={() => sendMessage()}
                 disabled={!input.trim() || loading}
-                className="absolute right-2 bottom-2 w-10 h-10 rounded-xl bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 disabled:from-dark-600 disabled:to-dark-600 flex items-center justify-center transition shadow-lg shadow-primary-500/20 disabled:shadow-none"
+                style={{
+                  position: "absolute", right: 6, bottom: 6, width: 36, height: 36,
+                  borderRadius: 10, border: "none", cursor: "pointer",
+                  background: (!input.trim() || loading) ? "#1a2236" : "#f59e0b",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  boxShadow: (!input.trim() || loading) ? "none" : "0 2px 12px rgba(245,158,11,0.2)",
+                }}
               >
                 {loading ? (
-                  <span className="animate-spin w-4 h-4 border-2 border-dark-900 border-t-transparent rounded-full" />
+                  <span style={{ width: 14, height: 14, border: "2px solid #0a0e1a", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite", display: "block" }} />
                 ) : (
-                  <svg className="w-4 h-4 text-dark-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg width="16" height="16" fill="none" stroke={(!input.trim()) ? "#475569" : "#0a0e1a"} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
                 )}
               </button>
             </div>
           </div>
-          <p className="text-center text-[11px] text-dark-500 mt-3">
+          <p style={{ textAlign: "center", fontSize: 11, color: "#334155", marginTop: 10 }}>
             Yurist AI maslahat beradi, lekin professional yurist o&apos;rnini bosmaydi
           </p>
         </div>
       </div>
+
+      <style>{`
+        @keyframes bounce { 0%,80%,100% { transform: scale(0) } 40% { transform: scale(1) } }
+        @keyframes spin { to { transform: rotate(360deg) } }
+      `}</style>
     </div>
   );
 }
