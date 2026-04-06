@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "yurist-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "/Users/lazizbeksaidov/PPT/yurist-ai"],
+      "port": 3000
+    }
+  ]
+}
