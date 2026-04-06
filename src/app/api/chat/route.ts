@@ -14,9 +14,7 @@ export async function POST(req: NextRequest) {
 
     const model = genAI.getGenerativeModel({
       model: "gemini-2.0-flash",
-      systemInstruction: {
-        parts: [{ text: LEGAL_SYSTEM_PROMPT }],
-      },
+      systemInstruction: LEGAL_SYSTEM_PROMPT,
     });
 
     const history = messages.slice(0, -1).map((m: { role: string; content: string }) => ({
