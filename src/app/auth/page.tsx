@@ -13,6 +13,83 @@ import {
 import { ConfirmationResult } from "firebase/auth";
 import { useAuth } from "@/lib/auth-context";
 
+const s = {
+  page: {
+    minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center",
+    padding: "40px 20px", background: "#0a0e1a", position: "relative" as const, overflow: "hidden" as const,
+  },
+  glow: {
+    position: "absolute" as const, top: "20%", left: "50%", transform: "translateX(-50%)",
+    width: 400, height: 400, background: "radial-gradient(circle, rgba(251,191,36,0.06) 0%, transparent 70%)",
+    pointerEvents: "none" as const,
+  },
+  wrapper: { position: "relative" as const, width: "100%", maxWidth: 400 },
+  logoWrap: {
+    display: "flex", alignItems: "center", justifyContent: "center", gap: 12,
+    marginBottom: 40, textDecoration: "none",
+  },
+  logoIcon: {
+    width: 52, height: 52, borderRadius: 16,
+    background: "linear-gradient(135deg, #fbbf24, #d97706)",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    boxShadow: "0 0 30px rgba(251,191,36,0.15)",
+  },
+  card: {
+    background: "rgba(17,24,39,0.7)", backdropFilter: "blur(20px)",
+    border: "1px solid rgba(255,255,255,0.06)",
+    borderRadius: 24, padding: "36px 32px",
+  },
+  title: { fontSize: 22, fontWeight: 700, textAlign: "center" as const, color: "#fff", marginBottom: 6 },
+  subtitle: { fontSize: 14, color: "#64748b", textAlign: "center" as const, marginBottom: 32 },
+  googleBtn: {
+    width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
+    background: "#fff", color: "#1f2937", fontWeight: 600, fontSize: 14,
+    padding: "14px 20px", borderRadius: 14, border: "none", cursor: "pointer",
+    boxShadow: "0 2px 12px rgba(0,0,0,0.1)", marginBottom: 0,
+  },
+  divider: {
+    display: "flex", alignItems: "center", gap: 16, margin: "24px 0",
+  },
+  dividerLine: { flex: 1, height: 1, background: "linear-gradient(90deg, transparent, #334155, transparent)" },
+  dividerText: { fontSize: 11, color: "#475569", textTransform: "uppercase" as const, letterSpacing: 2 },
+  phoneBtn: {
+    width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
+    background: "#1a2236", color: "#fff", fontWeight: 600, fontSize: 14,
+    padding: "14px 20px", borderRadius: 14, border: "1px solid #243049", cursor: "pointer",
+  },
+  backBtn: {
+    background: "none", border: "none", color: "#64748b", fontSize: 13,
+    cursor: "pointer", display: "flex", alignItems: "center", gap: 6, marginBottom: 24, padding: 0,
+  },
+  input: {
+    width: "100%", background: "#1a2236", border: "1px solid #243049",
+    borderRadius: 14, padding: "14px 18px", color: "#fff", fontSize: 16,
+    outline: "none", marginBottom: 20, boxSizing: "border-box" as const,
+  },
+  codeInput: {
+    width: "100%", background: "#1a2236", border: "1px solid #243049",
+    borderRadius: 14, padding: "16px 18px", color: "#fff", fontSize: 28,
+    textAlign: "center" as const, letterSpacing: "0.4em", fontFamily: "monospace",
+    outline: "none", marginBottom: 20, boxSizing: "border-box" as const,
+  },
+  submitBtn: {
+    width: "100%", background: "#f59e0b", color: "#0a0e1a", fontWeight: 700,
+    fontSize: 14, padding: "14px 20px", borderRadius: 14, border: "none",
+    cursor: "pointer", boxShadow: "0 4px 20px rgba(245,158,11,0.2)",
+  },
+  disabledBtn: {
+    width: "100%", background: "#1a2236", color: "#475569", fontWeight: 700,
+    fontSize: 14, padding: "14px 20px", borderRadius: 14, border: "none",
+    cursor: "not-allowed",
+  },
+  error: {
+    marginTop: 20, padding: "14px 16px", background: "rgba(239,68,68,0.08)",
+    border: "1px solid rgba(239,68,68,0.15)", borderRadius: 12,
+    color: "#f87171", fontSize: 13, display: "flex", alignItems: "flex-start", gap: 8,
+  },
+  footer: { textAlign: "center" as const, color: "#475569", fontSize: 13, marginTop: 32 },
+};
+
 export default function AuthPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
@@ -67,47 +144,39 @@ export default function AuthPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-2 border-primary-400 border-t-transparent rounded-full" />
+      <div style={{ ...s.page, fontFamily: "'Inter', sans-serif" }}>
+        <div style={{ width: 32, height: 32, border: "2px solid #fbbf24", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-10 relative overflow-hidden">
-      {/* BG effects */}
-      <div className="absolute inset-0">
-        <div className="absolute top-20 left-1/3 w-80 h-80 bg-primary-500/8 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-1/3 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl" />
-      </div>
+    <div style={{ ...s.page, fontFamily: "'Inter', -apple-system, sans-serif" }}>
+      <div style={s.glow} />
 
-      <div className="relative w-full max-w-md animate-fade-up">
+      <div style={s.wrapper}>
         {/* Logo */}
-        <Link href="/" className="flex items-center justify-center gap-3 mb-10">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center shadow-xl glow-amber">
-            <svg className="w-8 h-8 text-dark-900" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L19.18 7.5 12 10.82 4.82 7.5 12 4.18zM4 8.64l7 3.5V19.5l-7-3.5V8.64zm9 10.86v-7.36l7-3.5v7.36l-7 3.5z"/>
+        <Link href="/" style={s.logoWrap}>
+          <div style={s.logoIcon}>
+            <svg width="24" height="24" fill="none" stroke="#0a0e1a" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
             </svg>
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white">Yurist AI</h1>
-            <p className="text-dark-300 text-sm">Huquqiy yordamchi</p>
+            <div style={{ fontSize: 20, fontWeight: 700, color: "#fff" }}>Yurist AI</div>
+            <div style={{ fontSize: 13, color: "#64748b" }}>Huquqiy yordamchi</div>
           </div>
         </Link>
 
         {/* Card */}
-        <div className="glass rounded-3xl p-8 shadow-2xl">
+        <div style={s.card}>
           {mode === "main" ? (
             <>
-              <h2 className="text-2xl font-bold text-center text-white mb-2">Xush kelibsiz</h2>
-              <p className="text-dark-300 text-center mb-8">Tizimga kirish usulini tanlang</p>
+              <h2 style={s.title}>Xush kelibsiz</h2>
+              <p style={s.subtitle}>Tizimga kirish usulini tanlang</p>
 
-              {/* Google */}
-              <button
-                onClick={handleGoogle}
-                className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-50 text-gray-800 font-semibold py-3.5 px-5 rounded-2xl transition shadow-lg shadow-black/10 mb-4"
-              >
-                <svg className="w-5 h-5" viewBox="0 0 24 24">
+              <button onClick={handleGoogle} style={s.googleBtn}>
+                <svg width="18" height="18" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
                   <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                   <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -116,71 +185,55 @@ export default function AuthPage() {
                 Google bilan kirish
               </button>
 
-              {/* Divider */}
-              <div className="flex items-center gap-4 my-6">
-                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-dark-500 to-transparent" />
-                <span className="text-xs text-dark-400 uppercase tracking-wider">yoki</span>
-                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-dark-500 to-transparent" />
+              <div style={s.divider}>
+                <div style={s.dividerLine} />
+                <span style={s.dividerText}>yoki</span>
+                <div style={s.dividerLine} />
               </div>
 
-              {/* Phone */}
-              <button
-                onClick={() => setMode("phone")}
-                className="w-full flex items-center justify-center gap-3 bg-dark-600 hover:bg-dark-500 text-white font-semibold py-3.5 px-5 rounded-2xl transition border border-dark-500 hover:border-dark-400"
-              >
-                <svg className="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              <button onClick={() => setMode("phone")} style={s.phoneBtn}>
+                <svg width="18" height="18" fill="none" stroke="#fbbf24" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
                 Telefon raqam bilan kirish
               </button>
             </>
           ) : !confirmResult ? (
             <>
-              <button
-                onClick={() => { setMode("main"); setError(""); }}
-                className="text-dark-300 hover:text-white mb-6 text-sm flex items-center gap-2 transition"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <button onClick={() => { setMode("main"); setError(""); }} style={s.backBtn}>
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
                 Orqaga
               </button>
-              <h2 className="text-2xl font-bold text-white mb-2">Telefon raqam</h2>
-              <p className="text-dark-300 text-sm mb-6">O&apos;zbekiston raqamingizni kiriting</p>
+              <h2 style={{ ...s.title, textAlign: "left" }}>Telefon raqam</h2>
+              <p style={{ fontSize: 14, color: "#64748b", marginBottom: 24 }}>O&apos;zbekiston raqamingizni kiriting</p>
               <input
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="+998 90 123 45 67"
-                className="w-full bg-dark-700 border border-dark-500 rounded-2xl px-5 py-3.5 text-white placeholder-dark-400 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500/50 transition mb-5 text-lg"
+                style={s.input}
               />
               <button
                 onClick={sendSMS}
                 disabled={sending || phone.length < 9}
-                className="w-full bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 disabled:from-dark-600 disabled:to-dark-600 disabled:text-dark-400 text-dark-900 font-bold py-3.5 rounded-2xl transition shadow-lg shadow-primary-500/20"
+                style={(sending || phone.length < 9) ? s.disabledBtn : s.submitBtn}
               >
-                {sending ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <span className="animate-spin w-4 h-4 border-2 border-dark-900 border-t-transparent rounded-full" />
-                    Yuborilmoqda...
-                  </span>
-                ) : "SMS kod yuborish"}
+                {sending ? "Yuborilmoqda..." : "SMS kod yuborish"}
               </button>
             </>
           ) : (
             <>
-              <button
-                onClick={() => { setConfirmResult(null); setCode(""); setError(""); }}
-                className="text-dark-300 hover:text-white mb-6 text-sm flex items-center gap-2 transition"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <button onClick={() => { setConfirmResult(null); setCode(""); setError(""); }} style={s.backBtn}>
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
                 Orqaga
               </button>
-              <h2 className="text-2xl font-bold text-white mb-2">Tasdiqlash kodi</h2>
-              <p className="text-dark-300 text-sm mb-6">
-                <span className="text-primary-400 font-medium">{phone}</span> raqamiga yuborilgan 6 xonali kodni kiriting
+              <h2 style={{ ...s.title, textAlign: "left" }}>Tasdiqlash kodi</h2>
+              <p style={{ fontSize: 14, color: "#64748b", marginBottom: 24 }}>
+                <span style={{ color: "#fbbf24", fontWeight: 500 }}>{phone}</span> raqamiga yuborilgan 6 xonali kodni kiriting
               </p>
               <input
                 type="text"
@@ -188,12 +241,12 @@ export default function AuthPage() {
                 onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
                 placeholder="000000"
                 maxLength={6}
-                className="w-full bg-dark-700 border border-dark-500 rounded-2xl px-5 py-4 text-white text-center text-3xl tracking-[0.5em] font-mono placeholder-dark-500 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500/50 transition mb-5"
+                style={s.codeInput}
               />
               <button
                 onClick={verifyCode}
                 disabled={code.length < 6}
-                className="w-full bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 disabled:from-dark-600 disabled:to-dark-600 disabled:text-dark-400 text-dark-900 font-bold py-3.5 rounded-2xl transition shadow-lg shadow-primary-500/20"
+                style={code.length < 6 ? s.disabledBtn : s.submitBtn}
               >
                 Tasdiqlash
               </button>
@@ -201,8 +254,8 @@ export default function AuthPage() {
           )}
 
           {error && (
-            <div className="mt-5 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm flex items-start gap-2">
-              <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div style={s.error}>
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ flexShrink: 0, marginTop: 1 }}>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               {error}
@@ -210,12 +263,8 @@ export default function AuthPage() {
           )}
         </div>
 
-        <p className="text-center text-dark-400 text-sm mt-8">
-          Kirish orqali siz{" "}
-          <span className="text-dark-300 underline underline-offset-2 cursor-pointer hover:text-white transition">
-            foydalanish shartlari
-          </span>
-          ga rozilik bildirasiz
+        <p style={s.footer}>
+          Kirish orqali siz <span style={{ color: "#94a3b8", textDecoration: "underline", cursor: "pointer" }}>foydalanish shartlari</span>ga rozilik bildirasiz
         </p>
       </div>
 
