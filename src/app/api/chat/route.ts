@@ -12,15 +12,19 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: "Xabarlar kerak" }, { status: 400 });
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-
-    const chat = model.startChat({
-      history: messages.slice(0, -1).map((m: { role: string; content: string }) => ({
-        role: m.role === "assistant" ? "model" : "user",
-        parts: [{ text: m.content }],
-      })),
-      systemInstruction: LEGAL_SYSTEM_PROMPT,
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.0-flash",
+      systemInstruction: {
+        parts: [{ text: LEGAL_SYSTEM_PROMPT }],
+      },
     });
+
+    const history = messages.slice(0, -1).map((m: { role: string; content: string }) => ({
+      role: m.role === "assistant" ? "model" : "user",
+      parts: [{ text: m.content }],
+    }));
+
+    const chat = model.startChat({ history });
 
     const lastMessage = messages[messages.length - 1].content;
     const result = await chat.sendMessageStream(lastMessage);
